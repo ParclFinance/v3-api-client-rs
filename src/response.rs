@@ -251,31 +251,39 @@ pub enum MarketIdentifiersResponse {
 pub struct MarginAccountInfo {
     #[serde(with = "field_as_string")]
     pub address: Pubkey,
+    pub id: MarginAccountId,
     pub active_market_ids: Vec<MarketId>,
     pub positions: Vec<PositionInfo>,
+    pub margins: Margins,
     #[serde(with = "field_as_string")]
     pub margin: u64,
-    pub id: MarginAccountId,
+    #[serde(with = "field_as_string")]
+    pub excess_margin: u64,
     #[serde(with = "field_as_string")]
     pub exchange: Pubkey,
     #[serde(with = "field_as_string")]
     pub owner: Pubkey,
     #[serde(with = "field_as_string")]
     pub delegate: Pubkey,
-    pub in_liquidation: bool,
-    pub margins: Margins,
     pub can_close: bool,
     pub can_liquidate: bool,
+    pub in_liquidation: bool,
 }
 
 #[derive(Deserialize, Debug, Default, PartialEq, Clone)]
 pub struct Margins {
-    pub total_required_margin: String,
-    pub available_margin: String,
-    pub required_initial_margin: String,
-    pub required_maintenance_margin: String,
-    pub required_liquidation_fee_margin: String,
-    pub accumulated_liquidation_fees: String,
+    #[serde(with = "field_as_string")]
+    pub available_margin: i128,
+    #[serde(with = "field_as_string")]
+    pub total_required_margin: u64,
+    #[serde(with = "field_as_string")]
+    pub required_initial_margin: u64,
+    #[serde(with = "field_as_string")]
+    pub required_maintenance_margin: u64,
+    #[serde(with = "field_as_string")]
+    pub required_liquidation_fee_margin: u64,
+    #[serde(with = "field_as_string")]
+    pub accumulated_liquidation_fees: u64,
 }
 
 #[derive(Deserialize, Clone, Debug)]
