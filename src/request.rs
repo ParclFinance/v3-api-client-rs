@@ -218,3 +218,33 @@ pub struct LiquidatePayload {
     pub exchange_id: Option<ExchangeIdentifier>,
     pub priority_fee_percentile: Option<u16>,
 }
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct ModifyPositionQuotePayload {
+    #[serde(with = "field_as_string")]
+    pub owner: Pubkey,
+    pub margin_account_id: MarginAccountIdentifier,
+    pub market_id: MarketId,
+    pub size_delta: i128,
+    pub slippage_setting: SlippageSetting,
+    pub exchange_id: Option<ExchangeIdentifier>,
+}
+
+impl ModifyPositionQuotePayload {
+    pub fn new_with_defaults(
+        owner: Pubkey,
+        margin_account_id: MarginAccountIdentifier,
+        market_id: MarketId,
+        size_delta: i128,
+        slippage_setting: SlippageSetting,
+    ) -> Self {
+        Self {
+            owner,
+            margin_account_id,
+            market_id,
+            size_delta,
+            slippage_setting,
+            exchange_id: None,
+        }
+    }
+}
