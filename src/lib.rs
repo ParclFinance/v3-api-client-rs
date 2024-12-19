@@ -59,7 +59,7 @@ impl ParclV3ApiClient {
             .query(&[("exchange_id", self.exchange_id.to_string())])
             .send()
             .await?;
-        validate_and_deserialize_response(response).await
+        validate_and_deserialize_response::<ExchangeInfo>(response).await
     }
 
     pub async fn get_exponents(&self) -> Result<HashMap<String, i32>> {
@@ -69,7 +69,7 @@ impl ParclV3ApiClient {
             .query(&[("exchange_id", self.exchange_id.to_string())])
             .send()
             .await?;
-        validate_and_deserialize_response(response).await
+        validate_and_deserialize_response::<HashMap<String, i32>>(response).await
     }
 
     async fn get_market_ids_internal(
@@ -83,7 +83,7 @@ impl ParclV3ApiClient {
             .query(&[("exchange_id", self.exchange_id.to_string())])
             .send()
             .await?;
-        validate_and_deserialize_response(response).await
+        validate_and_deserialize_response::<MarketIdentifiersResponse>(response).await
     }
 
     pub async fn get_market_ids(&self) -> Result<Vec<MarketId>> {
@@ -136,7 +136,7 @@ impl ParclV3ApiClient {
             .query(&[("exchange_id", self.exchange_id.to_string())])
             .send()
             .await?;
-        validate_and_deserialize_response(response).await
+        validate_and_deserialize_response::<MarginAccountInfo>(response).await
     }
 
     pub async fn get_margin_account_from_id(
@@ -169,7 +169,7 @@ impl ParclV3ApiClient {
             })
             .send()
             .await?;
-        validate_and_deserialize_response(response).await
+        validate_and_deserialize_response::<Vec<Option<MarginAccountInfo>>>(response).await
     }
 
     pub async fn get_unhealthy_margin_accounts(&self) -> Result<Vec<Pubkey>> {
@@ -195,7 +195,7 @@ impl ParclV3ApiClient {
             .query(&[("exchange_id", self.exchange_id.to_string())])
             .send()
             .await?;
-        validate_and_deserialize_response(response).await
+        validate_and_deserialize_response::<MarketInfo>(response).await
     }
 
     pub async fn get_market_from_id(&self, market_id: MarketId) -> Result<MarketInfo> {
@@ -216,7 +216,7 @@ impl ParclV3ApiClient {
             })
             .send()
             .await?;
-        validate_and_deserialize_response(response).await
+        validate_and_deserialize_response::<Vec<MarketInfo>>(response).await
     }
 
     pub async fn get_markets_from_addresses(
@@ -254,7 +254,7 @@ impl ParclV3ApiClient {
             })
             .send()
             .await?;
-        validate_and_deserialize_response(response).await
+        validate_and_deserialize_response::<CreateMarginAccountTransactionResponse>(response).await
     }
 
     pub async fn get_create_margin_account_instructions(
@@ -296,7 +296,7 @@ impl ParclV3ApiClient {
             })
             .send()
             .await?;
-        validate_and_deserialize_response(response).await
+        validate_and_deserialize_response::<TransactionInfo>(response).await
     }
 
     pub async fn get_close_margin_account_instructions(
@@ -338,7 +338,7 @@ impl ParclV3ApiClient {
             })
             .send()
             .await?;
-        validate_and_deserialize_response(response).await
+        validate_and_deserialize_response::<TransactionInfo>(response).await
     }
 
     pub async fn get_deposit_margin_instructions(
@@ -386,7 +386,7 @@ impl ParclV3ApiClient {
             })
             .send()
             .await?;
-        validate_and_deserialize_response(response).await
+        validate_and_deserialize_response::<TransactionInfo>(response).await
     }
 
     pub async fn get_withdraw_margin_instructions(
@@ -438,7 +438,7 @@ impl ParclV3ApiClient {
             })
             .send()
             .await?;
-        validate_and_deserialize_response(response).await
+        validate_and_deserialize_response::<TransactionInfo>(response).await
     }
 
     pub async fn get_modify_position_instructions(
@@ -488,7 +488,7 @@ impl ParclV3ApiClient {
             })
             .send()
             .await?;
-        validate_and_deserialize_response(response).await
+        validate_and_deserialize_response::<TransactionInfo>(response).await
     }
 
     pub async fn get_close_position_instructions(
@@ -534,7 +534,7 @@ impl ParclV3ApiClient {
             })
             .send()
             .await?;
-        validate_and_deserialize_response(response).await
+        validate_and_deserialize_response::<TransactionInfo>(response).await
     }
 
     pub async fn get_liquidate_instructions(
@@ -556,6 +556,32 @@ impl ParclV3ApiClient {
             .send()
             .await?;
         validate_and_deserialize_response::<InstructionInfoInternal>(response)
+            .await
+            .map(Into::into)
+    }
+
+    pub async fn get_modify_position_quote(
+        &self,
+        owner: Pubkey,
+        margin_account_id: MarginAccountIdentifier,
+        market_id: MarketId,
+        size_delta: i128,
+        slippage_setting: SlippageSetting,
+    ) -> Result<ModifyPositionQuote> {
+        let response = self
+            .client
+            .post(self.build_url("/modify-position-quote"))
+            .json(&ModifyPositionQuotePayload {
+                owner,
+                margin_account_id,
+                market_id,
+                size_delta,
+                slippage_setting,
+                exchange_id: Some(self.exchange_id),
+            })
+            .send()
+            .await?;
+        validate_and_deserialize_response::<ModifyPositionQuote>(response)
             .await
             .map(Into::into)
     }

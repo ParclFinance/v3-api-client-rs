@@ -355,3 +355,30 @@ pub struct MarketInfoSettings {
     #[serde(with = "field_as_string")]
     pub authorized_liquidator: Pubkey,
 }
+
+#[derive(Deserialize, Clone, Debug)]
+pub struct ModifyPositionQuote {
+    #[serde(with = "field_as_string")]
+    pub margin_account_address: Pubkey,
+    pub margin_account_id: MarginAccountId,
+    pub market_id: MarketId,
+    #[serde(with = "field_as_string")]
+    pub size_delta: i128,
+    #[serde(with = "field_as_string")]
+    pub acceptable_price: u64,
+    #[serde(with = "field_as_string")]
+    pub total_required_margin: u64,
+    #[serde(with = "field_as_string")]
+    pub new_position_size: i128,
+    #[serde(with = "field_as_string")]
+    pub fill_price: u64,
+    pub last_interaction_funding_per_unit: String,
+    #[serde(with = "field_as_string")]
+    pub index_price: u64,
+    #[serde(with = "field_as_string")]
+    pub trade_fee: u64,
+    #[serde(with = "field_as_string")]
+    pub position_initial_margin_ratio: f64,
+    #[serde(with = "field_as_string")]
+    pub position_maintenance_margin_ratio: f64,
+}
