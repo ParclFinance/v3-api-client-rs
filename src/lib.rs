@@ -424,6 +424,8 @@ impl ParclV3ApiClient {
         size_delta: i128,
         slippage_setting: SlippageSetting,
     ) -> Result<TransactionInfo> {
+        let (maybe_acceptable_price, maybe_slippage_tolerance_bps) =
+            slippage_setting.as_request_fields();
         let response = self
             .client
             .post(self.build_url("/modify-position-transaction"))
@@ -432,7 +434,8 @@ impl ParclV3ApiClient {
                 margin_account_id,
                 market_id,
                 size_delta,
-                slippage_setting,
+                acceptable_price: maybe_acceptable_price,
+                slippage_tolerance_bps: maybe_slippage_tolerance_bps,
                 exchange_id: Some(self.exchange_id),
                 priority_fee_percentile: self.priority_fee_percentile,
             })
@@ -449,6 +452,8 @@ impl ParclV3ApiClient {
         size_delta: i128,
         slippage_setting: SlippageSetting,
     ) -> Result<InstructionInfo> {
+        let (maybe_acceptable_price, maybe_slippage_tolerance_bps) =
+            slippage_setting.as_request_fields();
         let response = self
             .client
             .post(self.build_url("/modify-position-instructions"))
@@ -457,7 +462,8 @@ impl ParclV3ApiClient {
                 margin_account_id,
                 market_id,
                 size_delta,
-                slippage_setting,
+                acceptable_price: maybe_acceptable_price,
+                slippage_tolerance_bps: maybe_slippage_tolerance_bps,
                 exchange_id: Some(self.exchange_id),
                 priority_fee_percentile: self.priority_fee_percentile,
             })
@@ -475,6 +481,8 @@ impl ParclV3ApiClient {
         market_id: MarketId,
         slippage_setting: SlippageSetting,
     ) -> Result<TransactionInfo> {
+        let (maybe_acceptable_price, maybe_slippage_tolerance_bps) =
+            slippage_setting.as_request_fields();
         let response = self
             .client
             .post(self.build_url("/close-position-transaction"))
@@ -482,7 +490,8 @@ impl ParclV3ApiClient {
                 owner,
                 margin_account_id,
                 market_id,
-                slippage_setting,
+                acceptable_price: maybe_acceptable_price,
+                slippage_tolerance_bps: maybe_slippage_tolerance_bps,
                 exchange_id: Some(self.exchange_id),
                 priority_fee_percentile: self.priority_fee_percentile,
             })
@@ -498,6 +507,8 @@ impl ParclV3ApiClient {
         market_id: MarketId,
         slippage_setting: SlippageSetting,
     ) -> Result<InstructionInfo> {
+        let (maybe_acceptable_price, maybe_slippage_tolerance_bps) =
+            slippage_setting.as_request_fields();
         let response = self
             .client
             .post(self.build_url("/close-position-instructions"))
@@ -505,7 +516,8 @@ impl ParclV3ApiClient {
                 owner,
                 margin_account_id,
                 market_id,
-                slippage_setting,
+                acceptable_price: maybe_acceptable_price,
+                slippage_tolerance_bps: maybe_slippage_tolerance_bps,
                 exchange_id: Some(self.exchange_id),
                 priority_fee_percentile: self.priority_fee_percentile,
             })
@@ -568,6 +580,8 @@ impl ParclV3ApiClient {
         size_delta: i128,
         slippage_setting: SlippageSetting,
     ) -> Result<ModifyPositionQuote> {
+        let (maybe_acceptable_price, maybe_slippage_tolerance_bps) =
+            slippage_setting.as_request_fields();
         let response = self
             .client
             .post(self.build_url("/modify-position-quote"))
@@ -576,7 +590,8 @@ impl ParclV3ApiClient {
                 margin_account_id,
                 market_id,
                 size_delta,
-                slippage_setting,
+                acceptable_price: maybe_acceptable_price,
+                slippage_tolerance_bps: maybe_slippage_tolerance_bps,
                 exchange_id: Some(self.exchange_id),
             })
             .send()
