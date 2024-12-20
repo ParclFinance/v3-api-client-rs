@@ -1,4 +1,4 @@
-use crate::serde_utils::{field_as_string, pubkey_vec};
+use crate::serde_utils::{field_as_string, optional_field_as_string, pubkey_vec};
 use serde::{Deserialize, Serialize};
 use solana_sdk::pubkey::Pubkey;
 
@@ -104,12 +104,19 @@ impl std::fmt::Display for MarketIdentifiersResponseKind {
     }
 }
 
-#[derive(Deserialize, Serialize, Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug)]
 pub enum SlippageSetting {
-    #[serde(with = "field_as_string")]
     AcceptablePrice(u64),
-    #[serde(with = "field_as_string")]
-    SlippageToleranceBps(u64),
+    SlippageToleranceBps(u16),
+}
+
+impl SlippageSetting {
+    pub fn as_request_fields(&self) -> (Option<u64>, Option<u16>) {
+        match self {
+            SlippageSetting::AcceptablePrice(price) => (Some(*price), None),
+            SlippageSetting::SlippageToleranceBps(bps) => (None, Some(*bps)),
+        }
+    }
 }
 
 #[derive(Deserialize, Serialize)]
@@ -140,7 +147,9 @@ pub struct ClosePositionPayload {
     pub owner: Pubkey,
     pub margin_account_id: MarginAccountIdentifier,
     pub market_id: MarketId,
-    pub slippage_setting: SlippageSetting,
+    #[serde(serialize_with = "optional_field_as_string::serialize")]
+    pub acceptable_price: Option<u64>,
+    pub slippage_tolerance_bps: Option<u16>,
     pub exchange_id: Option<ExchangeIdentifier>,
     pub priority_fee_percentile: Option<u16>,
 }
@@ -170,8 +179,11 @@ pub struct ModifyPositionPayload {
     pub owner: Pubkey,
     pub margin_account_id: MarginAccountIdentifier,
     pub market_id: MarketId,
+    #[serde(with = "field_as_string")]
     pub size_delta: i128,
-    pub slippage_setting: SlippageSetting,
+    #[serde(serialize_with = "optional_field_as_string::serialize")]
+    pub acceptable_price: Option<u64>,
+    pub slippage_tolerance_bps: Option<u16>,
     pub exchange_id: Option<ExchangeIdentifier>,
     pub priority_fee_percentile: Option<u16>,
 }
@@ -184,12 +196,14 @@ impl ModifyPositionPayload {
         size_delta: i128,
         slippage_setting: SlippageSetting,
     ) -> Self {
+        let (acceptable_price, slippage_tolerance_bps) = slippage_setting.as_request_fields();
         Self {
             owner,
             margin_account_id,
             market_id,
             size_delta,
-            slippage_setting,
+            acceptable_price,
+            slippage_tolerance_bps,
             exchange_id: None,
             priority_fee_percentile: None,
         }
@@ -225,8 +239,11 @@ pub struct ModifyPositionQuotePayload {
     pub owner: Pubkey,
     pub margin_account_id: MarginAccountIdentifier,
     pub market_id: MarketId,
+    #[serde(with = "field_as_string")]
     pub size_delta: i128,
-    pub slippage_setting: SlippageSetting,
+    #[serde(serialize_with = "optional_field_as_string::serialize")]
+    pub acceptable_price: Option<u64>,
+    pub slippage_tolerance_bps: Option<u16>,
     pub exchange_id: Option<ExchangeIdentifier>,
 }
 
@@ -238,12 +255,14 @@ impl ModifyPositionQuotePayload {
         size_delta: i128,
         slippage_setting: SlippageSetting,
     ) -> Self {
+        let (acceptable_price, slippage_tolerance_bps) = slippage_setting.as_request_fields();
         Self {
             owner,
             margin_account_id,
             market_id,
             size_delta,
-            slippage_setting,
+            acceptable_price,
+            slippage_tolerance_bps,
             exchange_id: None,
         }
     }

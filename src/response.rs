@@ -233,8 +233,11 @@ pub struct OracleConfig {
 
 #[derive(Deserialize, Clone, Debug)]
 pub enum OracleKind {
+    #[serde(rename = "pyth")]
     Pyth,
+    #[serde(rename = "parcl")]
     Parcl,
+    #[serde(rename = "pyth-v2")]
     PythV2,
 }
 
