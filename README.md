@@ -25,6 +25,14 @@ You can also specify the revision to lock the library to a specific commit:
 parcl-v3-api-client = { git = "https://github.com/ParclFinance/v3-api-client-rs.git", rev = <REV>, package = "parcl-v3-api-client" }
 ```
 
+## Usage
+
+```rust
+use parcl_v3_api_client::ParclV3ApiClient;
+
+let client = ParclV3ApiClient::default();
+```
+
 ## Examples
 
 For the full code and other examples please see [examples repo](https://github.com/ParclFinance/v3-api-examples).
